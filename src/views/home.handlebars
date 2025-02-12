@@ -1,7 +1,23 @@
-<h1 style="text-align: center; ">Productos</h1>
-<div style="display: flex;">
-    {{#each products}}
-        <h1>{{this.title}}</h1>
-        <p>{{this.price}}</p>
-    {{/each}}
-</div>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/home.css">
+    <title>Document</title>
+</head>
+<body>
+    <h1 class="products-title">PRODUCTOS</h1>
+    <div id="products-container">
+        <div id="products-list">
+            {{#each products}}
+            <div class="product-card">
+                <h3>{{this.title}}</h3>
+                <p>${{this.price}}</p>
+            </div>
+            {{/each}}
+        </div>
+    </div>
+</body>
+</html>
