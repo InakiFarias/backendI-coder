@@ -52,5 +52,23 @@
         "price": 23000,
         "status": true,
         "category": "Cabernet Sauvignon"
+    },
+    {
+        "id": "b0448c96-57f1-4ce2-a2af-ce9c944e55ff",
+        "title": "la linda cabernet suavignon",
+        "description": "traido de tu mama",
+        "code": "120",
+        "price": "7000",
+        "category": "cabernet",
+        "status": true
+    },
+    {
+        "id": "2d4f20e2-ff6d-4805-b7e4-30c4fe302f02",
+        "title": "Luigi Bosca Pinot Noir",
+        "description": "Vino Blend de Mendoza",
+        "code": "29",
+        "price": 10000,
+        "category": "Tintos",
+        "status": true
     }
 ]
