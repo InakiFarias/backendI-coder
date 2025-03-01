@@ -8,6 +8,7 @@ const productSchema = new Schema({
     "thumbnail": String,
     "code": Number,
     "stock": Number,
+    "category": String,
 });
 
 productSchema.plugin(moongosepaginte);
