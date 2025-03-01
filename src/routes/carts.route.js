@@ -1,37 +1,39 @@
-import { Router } from 'express'
-import fs from 'node:fs'
-import { v4 as uuidv4 } from 'uuid'
-import { cartManager } from '../managers/cart.manager.js'
+import { Router } from "express"
+import cartModel from "../models/cartModel.js"
+import upload from "../utils/multer.js"
 
 const route = Router()
 
-route.post('', async (req, res) => {
-    try{
-        const cart = await cartManager.create()
-        res.json(cart)
-    } catch(error) {
-        res.status(500).json({message: error.message})
-    }
+route.post("/", async (req, res) => {
+  const newCart = await cartModel.create({
+    products: [],
+  })
+
+  res.status(201).json({ message: "Carrito creado con exito", cart: newCart })
 })
 
-route.get('/:cId', async (req, res) => {
-    try{
-        const { cId } = req.params
-        const cart = await cartManager.getById(cId)
-        res.json(cart.products)
-    } catch(error) {
-        res.status(500).json({message: error.message})
-    }
+route.get("/:cid", async (req, res) => {
+  const { cid } = req.params
+
+  const cart = await cartModel.findById(cid).populate("products.product")
+
+  res.status(cart ? 200 : 404).json({ productList: cart?.products })
 })
 
-route.post('/:cId/product/:pId', async (req, res) => {
-    try{
-        const { cId, pId } = req.params
-        const cart = await cartManager.saveProdToCart(cId, pId)
-        res.json(cart)        
-    } catch(error) {
-        res.status(500).json({message: error.message})
-    }
-})
+route.put("/:cid", async (req, res) => {
+  const { cid } = req.params
+  const products = req.body
 
+  const cart = await cartModel.findById(cid)
+  if(!cart) return res.status(404).json({ message: "Carrito no encontrado"})
+
+  const newCart = {
+    ...cart,
+    products
+  }
+
+  const cartUpdated = await cartModel.findByIdAndUpdate(cid, newCart, {new: true}).populate("products.product")
+
+  res.status(201).json({ message: "Productos cargados", cart: cartUpdated })
+})
 export default route

@@ -1,33 +1,9 @@
-import { Router } from "express"
-import path from "path"
-import fs from "fs"
+import { Router } from "express";
 
-const route = Router()
+const route = Router();
 
-route.get("/", async (req, res) => {
-    try {
-        let products = []
-        if(fs.existsSync(path.join(process.cwd(), "src/datos/products.json"))) {
-            products = await fs.promises.readFile(path.join(process.cwd(), "src/datos/products.json"))
-            products = JSON.parse(products)
-        }
-        res.render("home", { products })
-    } catch (error) {
-        throw new Error(error.message)
-    }   
-})
+route.get("/", async (req, res) => {});
 
-route.get("/realTimeProducts", async (req, res) => {
-    try {
-        let products = []
-        if(fs.existsSync(path.join(process.cwd(), "src/datos/products.json"))) {
-            products = await fs.promises.readFile(path.join(process.cwd(), "src/datos/products.json"))
-            products = JSON.parse(products)
-        }
-        res.render("realTimeProducts", { products })
-    } catch (error) {
-        throw new Error(error.message)
-    }   
-})
+route.get("/cart/:cid", (req, res) => {});
 
-export default route 
+export default route;

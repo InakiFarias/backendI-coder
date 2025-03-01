@@ -1,71 +1,78 @@
-import { Router } from 'express'
-import fs from 'node:fs'
-import { v4 as uuidv4 } from 'uuid'
-import { prodManager } from '../managers/product.manager.js'
+import { Router } from "express"
+import productModel from "../models/productModel.js"
+import upload from "../utils/multer.js"
 
 const route = Router()
 
-route.get("", async (req, res) => {
-    try{
-        const { limit } = req.query
-        const products = await prodManager.getAll()
-    
-        if(!limit) {
-            return res.json(products)
-        }
-    
-        const limitNumber = parseInt(limit, 10)
+route.post("/", upload.single("file"), async (req, res) => {
+  const { title, description, price, code, stock } = req.body
+  if (!req.file || !title || !description || !price || !code || !stock)  
+    return res.status(402).json({ message: "Deben cargarse todos los campos correctamente" })
 
-        if(isNaN(limitNumber) || limitNumber < 1) {
-            return res.status(500).json({error: "El parametro 'limit' debe ser un numero mayor a 0"})
-        }
-    
-        res.json(products.slice(0, limitNumber))
-    } catch(error) {
-        res.status(500).json({ message: error.message })
-    }
+  const result = await productModel.create({
+    title,
+    description, 
+    price,
+    thumbnail: req.file.path.split("public")[1],
+    code, 
+    stock,
+  })
+
+  res.status(201).json({ payload: result})
 })
 
-route.get("/:pId", async (req, res) => {
-    try {
-        const { pId } = req.params
-        const product = await prodManager.getById(pId)
-        res.json(product)
-    } catch(error) {
-        res.status(500).json({message: error.message})
-    }
+route.get("/", async (req, res) => {
+  const { limit = 10, page = 1, sort = "", ...query } = req.query
+  const sortManager = {
+    "asc": 1,
+    "desc": -1,
+  }
+
+  const products = await productModel.paginate(
+    { ...query },
+    {
+      limit,
+      page,
+      ...(sort && { sort: {price: sortManager[sort]} }),
+      customLabels: { docs: 'payload'},
+    },
+  )
+
+  res.json({
+    ...products,
+    status: "success",
+  })
 })
 
-route.post("", async (req, res) => {
-    try{
-        const product = await prodManager.create(req.body)
-        res.json(product)
-    } catch(error) {
-        res.status(500).json({message: error.message})
-    }
+route.get("/:id", async (req, res) => {
+  const { id } = req.params
+
+  const product = await productModel.findById(id)
+
+  if(product)
+    res.status(200).json({ payload: product })
+  else
+    res.status(404).json({ error: "No se encontro el producto" })
 })
 
-route.put("/:pId", async (req, res) => {
-    try{
-        const { pId } = req.params
+route.put("/:id", upload.single("file"), async (req, res) => {
+  const { id } = req.params
+  const product = req.body
 
-        const product = await prodManager.update(req.body, pId)
-    
-        res.json(product)
-    } catch(error) {
-        res.status(500).json({message: error.message})
-    }
+  const productUpdated = await productModel.findByIdAndUpdate(id, {
+    ...product,
+    ...(req?.file?.path && {thumbnail: req.file.path}),
+  }, { new: true })
+
+  res.status(201).json({ message: "Producto actualizado correctamente", payload: productUpdated })
 })
 
-route.delete("/:pId", async (req, res) => {
-    try{
-        const { pId } = req.params
-        const product = await prodManager.delete(pId)
-        res.json(product)
-    } catch(error) {
-        res.status(500).json({message: error.message})
-    } 
+route.delete("/:id", async (req, res) => {
+  const { id } = req.params
+
+  const prodDelete = await productModel.findByIdAndDelete(id)
+
+  res.status(prodDelete ? 200 : 404).json({ payload: prodDelete })
 })
 
-
-export default route 
+export default route
