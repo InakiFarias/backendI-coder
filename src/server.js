@@ -1,6 +1,6 @@
 import express from "express";
 import mongoose from "mongoose";
-import handlebars from "express-handlebars";
+import { engine } from "express-handlebars"
 import path from "node:path";
 import ProductsRoute from "./routes/products.route.js";
 import CartsRoute from "./routes/carts.route.js";
@@ -16,7 +16,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(process.cwd(), "src", "public")));
 
-app.engine("handlebars", handlebars.engine());
+app.engine("handlebars", engine());
 app.set("views", path.join(process.cwd(), "src", "views"));
 app.set("view engine", "handlebars");
 
