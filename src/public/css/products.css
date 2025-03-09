@@ -13,6 +13,24 @@ body {
   padding: 20px;
 }
 
+.cart-link {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+}
+
+.cart-link:hover {
+  transform: scale(1.1);
+}
+
+.cart-link img {
+  width: 50px; 
+  height: auto;
+}
+
 .products-title {
   text-align: center;
   margin-bottom: 20px;
@@ -94,3 +112,30 @@ body {
   box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
 }
 
+#pagination-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+  gap: 10px;
+}
+
+#pagination-container button {
+  background-color: #5a0016;
+  border: none;
+  color: #fff;
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+#pagination-container button:hover {
+  transform: scale(1.05);
+}
+
+#pagination-container span {
+  font-size: 16px;
+  color: #333;
+}
